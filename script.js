@@ -1,109 +1,96 @@
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+const taskInput = document.getElementById("task-input");
+const taskDate = document.getElementById("task-date");
+const taskTag = document.getElementById("task-tag");
+const addBtn = document.getElementById("add-btn");
+const taskList = document.getElementById("task-list");
+const filters = document.querySelectorAll(".filter");
+const themeToggle = document.getElementById("theme-toggle");
+const emptyState = document.getElementById("empty-state");
 
-const input = document.getElementById('task-input');
-const dateInput = document.getElementById('task-date');
-const tagInput = document.getElementById('task-tag');
-const addBtn = document.getElementById('add-btn');
-const list = document.getElementById('task-list');
-const filters = document.querySelectorAll('.filter');
-const themeToggle = document.getElementById('theme-toggle');
-const emptyState = document.getElementById('empty-state');
+let tasks = [];
 
-function saveTasks() {
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-}
+function renderTasks(filter = "all") {
+  taskList.innerHTML = "";
 
-function renderTasks(filter = 'all') {
-  list.innerHTML = '';
   const filtered = tasks.filter(task => {
-    return (
-      filter === 'all' ||
-      (filter === 'active' && !task.completed) ||
-      (filter === 'completed' && task.completed)
-    );
+    if (filter === "active") return !task.completed;
+    if (filter === "completed") return task.completed;
+    return true;
   });
 
   if (filtered.length === 0) {
-    emptyState.style.display = 'block';
+    emptyState.style.display = "block";
     return;
   } else {
-    emptyState.style.display = 'none';
+    emptyState.style.display = "none";
   }
 
   filtered.forEach((task, index) => {
-    const li = document.createElement('li');
-    li.className = 'task-item';
-    if (task.completed) li.classList.add('completed');
+    const li = document.createElement("li");
+    li.className = `task ${task.completed ? "completed" : ""}`;
 
-    const title = document.createElement('span');
-    title.className = 'task-title';
-    title.textContent = task.text;
-    title.contentEditable = true;
-    title.onblur = () => {
-      tasks[index].text = title.textContent;
-      saveTasks();
-    };
+    const details = document.createElement("div");
+    details.className = "task-details";
+    details.innerHTML = `
+      <strong>${task.text}</strong> <br/>
+      <small>${task.date} | ${task.tag}</small>
+    `;
 
-    const actions = document.createElement('div');
-    actions.className = 'task-actions';
+    const actions = document.createElement("div");
+    actions.className = "task-actions";
+    const completeBtn = document.createElement("button");
+    completeBtn.textContent = task.completed ? "Undo" : "Done";
+    completeBtn.onclick = () => toggleComplete(index);
 
-    const info = document.createElement('small');
-    info.textContent = `Tag: ${task.tag} | Due: ${task.date || 'None'}`;
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.onclick = () => deleteTask(index);
 
-    const completeBtn = document.createElement('button');
-    completeBtn.textContent = task.completed ? 'Mark Incomplete' : 'Mark Complete';
-    completeBtn.onclick = () => {
-      task.completed = !task.completed;
-      saveTasks();
-      renderTasks(filter);
-    };
+    actions.appendChild(completeBtn);
+    actions.appendChild(deleteBtn);
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.onclick = () => {
-      tasks.splice(index, 1);
-      saveTasks();
-      renderTasks(filter);
-    };
+    li.appendChild(details);
+    li.appendChild(actions);
 
-    actions.append(info, completeBtn, deleteBtn);
-    li.append(title, actions);
-    list.appendChild(li);
+    taskList.appendChild(li);
   });
 }
 
-addBtn.onclick = () => {
-  const text = input.value.trim();
-  const date = dateInput.value;
-  const tag = tagInput.value;
+function toggleComplete(index) {
+  tasks[index].completed = !tasks[index].completed;
+  renderTasks();
+}
 
-  if (!text) return;
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  renderTasks();
+}
+
+addBtn.addEventListener("click", () => {
+  const text = taskInput.value.trim();
+  const date = taskDate.value;
+  const tag = taskTag.value;
+
+  if (!text || !date) return alert("Please enter task and date");
 
   tasks.push({ text, date, tag, completed: false });
-  input.value = '';
-  renderTasks();
-  saveTasks();
-};
-
-filters.forEach(button => {
-  button.onclick = () => {
-    const filter = button.dataset.filter;
-    renderTasks(filter);
-  };
-});
-
-themeToggle.onclick = () => {
-  document.body.classList.toggle('light');
-  const mode = document.body.classList.contains('light') ? 'Light Mode' : 'Dark Mode';
-  themeToggle.textContent = mode;
-  localStorage.setItem('theme', mode);
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'Light Mode') {
-    document.body.classList.add('light');
-    themeToggle.textContent = 'Light Mode';
-  }
+  taskInput.value = "";
+  taskDate.value = "";
+  taskTag.value = "Work";
   renderTasks();
 });
+
+filters.forEach(btn => {
+  btn.addEventListener("click", () => {
+    filters.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderTasks(btn.dataset.filter);
+  });
+});
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+  themeToggle.textContent = document.body.classList.contains("dark-mode") ? "Light" : "Dark";
+});
+
+renderTasks();

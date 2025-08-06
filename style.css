@@ -6,140 +6,130 @@
 }
 
 body {
-  background-color: #121212;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
-  transition: background 0.3s;
+  background-color: #f1f1f1;
+  color: #333;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body.light {
-  background-color: #f0f0f0;
-  color: #333;
+.dark-mode {
+  background-color: #1f1f1f;
+  color: #eee;
 }
 
 .app {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 2rem;
-  border-radius: 1rem;
-  width: 100%;
   max-width: 600px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.dark-mode .app {
+  background-color: #2a2a2a;
 }
 
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 2rem;
 }
 
 #theme-toggle {
-  background: none;
-  border: 1px solid currentColor;
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #444;
+  color: white;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .input-area {
+  margin: 1rem 0;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .input-area input,
 .input-area select,
 .input-area button {
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 0.4rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.input-area button {
+  background-color: #007bff;
+  color: white;
   border: none;
 }
 
-#add-btn {
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
 .filter-area {
-  margin-bottom: 1rem;
   display: flex;
-  gap: 0.5rem;
+  justify-content: space-around;
+  margin: 1rem 0;
 }
 
 .filter {
-  padding: 0.4rem 1rem;
-  border: 1px solid currentColor;
-  background: transparent;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background-color: #eee;
   cursor: pointer;
-  border-radius: 0.4rem;
+  border-radius: 5px;
+}
+
+.filter.active {
+  background-color: #007bff;
+  color: white;
 }
 
 #task-list {
   list-style: none;
+  margin-top: 1rem;
 }
 
-.task-item {
-  background-color: rgba(255, 255, 255, 0.1);
-  margin-bottom: 0.6rem;
-  padding: 0.8rem;
-  border-radius: 0.5rem;
+.task {
+  background-color: #fafafa;
+  margin-bottom: 0.5rem;
+  padding: 0.7rem;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: 0.3s;
 }
 
-.task-item.done {
+.task.completed {
   text-decoration: line-through;
   opacity: 0.6;
 }
 
-.task-item span {
-  flex-grow: 1;
-  margin-right: 1rem;
+.task-details {
+  flex: 1;
 }
 
-.task-item small {
-  display: inline-block;
-  margin-right: 0.5rem;
-  font-size: 0.75rem;
-}
-
-.task-item button {
-  background: none;
+.task-actions button {
+  margin-left: 0.5rem;
   border: none;
+  background: none;
   cursor: pointer;
-  margin-left: 0.3rem;
-  color: inherit;
+  color: #007bff;
 }
 
 #empty-state {
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
-  display: none;
+  margin-top: 2rem;
+  color: #888;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 600px) {
+/* Responsive */
+@media (max-width: 600px) {
   .input-area {
     flex-direction: column;
-  }
-
-  .input-area input,
-  .input-area select,
-  .input-area button {
-    width: 100%;
   }
 
   header {
